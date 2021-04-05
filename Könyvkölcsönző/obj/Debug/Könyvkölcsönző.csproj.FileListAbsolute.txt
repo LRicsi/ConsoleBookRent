@@ -1,0 +1,7 @@
+C:\Users\richa\Desktop\féléves projekt\Könyvkölcsönző\Könyvkölcsönző\bin\Debug\Könyvkölcsönző.exe.config
+C:\Users\richa\Desktop\féléves projekt\Könyvkölcsönző\Könyvkölcsönző\bin\Debug\Könyvkölcsönző.exe
+C:\Users\richa\Desktop\féléves projekt\Könyvkölcsönző\Könyvkölcsönző\bin\Debug\Könyvkölcsönző.pdb
+C:\Users\richa\Desktop\féléves projekt\Könyvkölcsönző\Könyvkölcsönző\obj\Debug\Könyvkölcsönző.csprojAssemblyReference.cache
+C:\Users\richa\Desktop\féléves projekt\Könyvkölcsönző\Könyvkölcsönző\obj\Debug\Könyvkölcsönző.csproj.CoreCompileInputs.cache
+C:\Users\richa\Desktop\féléves projekt\Könyvkölcsönző\Könyvkölcsönző\obj\Debug\Könyvkölcsönző.exe
+C:\Users\richa\Desktop\féléves projekt\Könyvkölcsönző\Könyvkölcsönző\obj\Debug\Könyvkölcsönző.pdb
