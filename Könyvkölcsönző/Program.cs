@@ -24,7 +24,7 @@ namespace Könyvkölcsönző
         {
             Methods admin = new Methods();
             admin.Fomenu();
-
+            admin.CheckStart();
             Console.ReadLine();
         }//main
     }//class Program

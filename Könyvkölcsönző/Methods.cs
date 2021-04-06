@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography; //sha256-kódoláshoz kell
-using System.IO;
-using System.Runtime.Remoting.Messaging; // fájlkezeléshez
+using System.IO; // fájlkezeléshez
+using System.Runtime.Remoting.Messaging; 
 namespace Könyvkölcsönző
 {
     class Methods
     {
-        public Dictionary<string, string> felhasznalok = new Dictionary<string, string>(); // felhasználók tárolója, későbbi fejlesztés pl. try catch exception ha ugyan az a felhasználó akar regisztrálni
+        public const string FelhasznalokFile = "felhasznalokdict.txt";
+        public Dictionary<string, string> felhasznalokdict = new Dictionary<string, string>(); // felhasználók tárolója, későbbi fejlesztés pl. try catch exception ha ugyan az a felhasználó akar regisztrálni
         public void Bejelentkez()
         {
             string welcome = "Kérem, jelentkezzen be !";
@@ -24,20 +25,7 @@ namespace Könyvkölcsönző
             Console.Write(String.Format("{0," + ((Console.WindowWidth / 2) + (jelszo.Length / 2)) + "}", jelszo));
             string eltarolpw = PwHandler();
 
-            string egy, keto;
-            using (StreamReader sr = new StreamReader(File.Open("C:\\Users\\richa\\Desktop\\féléves projekt\\Könyvkölcsönző\\Könyvkölcsönző\\bin\\Debug\\1.txt", FileMode.Open)))
-            {
-                //felhasznalok.Add(Console.ReadLine(),Console.ReadLine()); //txt-ből beolvassa az adatokat
-                egy = Console.ReadLine();
-                keto = Console.ReadLine();
-                sr.Close();
-            }
-
-            Console.WriteLine(egy + keto + "anything");
-            //foreach (KeyValuePair<string, string> count in felhasznalok)
-            //{
-            //    Console.WriteLine($"{count.Key} : {count.Value}");
-            //}
+            //megírni a user+pw ellenőrzést
         }
 
         public void Regisztral()
@@ -56,17 +44,11 @@ namespace Könyvkölcsönző
             Console.Write(String.Format("{0," + ((Console.WindowWidth / 2) + (jelszo.Length / 2)) + "}", jelszo));
 
             string pw = PwHandler();
-            
-            using (StreamWriter sv =
-                new StreamWriter(File.Create(
-                    "C:\\Users\\richa\\Desktop\\féléves projekt\\Könyvkölcsönző\\Könyvkölcsönző\\bin\\Debug\\1.txt")))
-            {
-                sv.WriteLine(eltarolFelh);
-                sv.WriteLine(Hash(pw));
-                sv.Close();
-            }
-
+            pw=Hash(pw);
+            fajlbair(eltarolFelh,pw);
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Kész...");
+            Console.ResetColor();
         }
         public string Hash(string raw)
         {
@@ -153,6 +135,47 @@ namespace Könyvkölcsönző
             int a = 0;
             a++;
             return a;
+        }
+
+        public void CheckStart()
+        {
+            //mivel nincs szerver, ez a metódus ellenőrzi hogy létezik-e az 
+            //adatbázisként szolgáló txt fájl, illetve ez tölti fel az induláskor
+            //a még üres szótárakat, arraylisteket
+
+            if (!File.Exists(FelhasznalokFile))
+            {
+                using (StreamWriter sv = new StreamWriter(File.Create("felhasznalokdict.txt"))) ;
+            }
+            // könyveket tartalmazó fájl kell még 
+
+            string user = "", pw = "";
+            int szamlalo = 0;
+            using (StreamReader sr = new StreamReader("1.txt"))
+            {
+                while (!sr.EndOfStream)
+                {
+                    if (szamlalo % 2 == 0)
+                    {
+                        user = sr.ReadLine();
+                        szamlalo++;
+                    }
+                    else
+                    {
+                        pw = sr.ReadLine();
+                    }
+                    felhasznalokdict.Add(user,pw);
+                    user = "";
+                    pw = "";
+                }
+            }
+        }
+
+        public void fajlbair(string user, string uspw)
+        {
+            string[] sorok = {user, uspw};
+            File.AppendAllLines(Path.Combine(FelhasznalokFile),sorok);
+            
         }
 
         
