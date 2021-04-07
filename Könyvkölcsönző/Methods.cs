@@ -178,6 +178,11 @@ namespace Könyvkölcsönző
             
         }
 
+        public void BookManage()
+        {
+            //csak könyvtáros használhatja, hozzájuk kötni valahogy
+            //kell ez egyáltalán?
+        }
         
     }//class
 }//namespace

@@ -97,5 +97,64 @@ namespace Könyvkölcsönző
            this.tantargy = tantargy;
        }
     }
-    
+    ////////////////////////////////////////
+    ////////////////////////////////////////
+    /// könyvek
+    public abstract class Konyv
+    {
+        protected int konyv_azon;
+        protected string mufaj;
+        protected int kiadaseve;
+        protected string cim;
+
+        public Konyv(int konyv_azon, string mufaj, int kiadaseve, string cim)
+        {
+            this.konyv_azon = konyv_azon;
+            this.mufaj = mufaj;
+            this.kiadaseve = kiadaseve;
+            this.cim = cim;
+        }
+    }//Könyv absztrakt osztálya
+
+    public class Hangoskonyv : Konyv
+    {
+        public Hangoskonyv(int konyv_azon, string mufaj, int kiadaseve, string cim) : base (konyv_azon,mufaj,kiadaseve,cim)
+        {
+
+        }
+    }
+
+    public class Szepirodalom : Konyv
+    {
+        public Szepirodalom(int konyv_azon, string mufaj, int kiadaseve, string cim) : base(konyv_azon, mufaj, kiadaseve, cim)
+        {
+
+        }
+    }
+
+    public class Tankonyv : Konyv
+    {
+        protected string tantargy;
+        protected int evfolyam;
+        public Tankonyv(int konyv_azon, string mufaj, int kiadaseve, string cim,string tantargy,int evfolyam) : base(konyv_azon, mufaj, kiadaseve, cim)
+        {
+            this.tantargy = tantargy;
+            this.evfolyam = evfolyam;
+        }
+    }
+
+    public class Nyelvkonyv : Konyv
+    {
+        protected string nyelv;
+        protected string szint;
+        public Nyelvkonyv(int konyv_azon, string mufaj, int kiadaseve, string cim,string nyelv,string szint) : base(konyv_azon, mufaj, kiadaseve, cim)
+        {
+            this.nyelv = nyelv;
+            this.szint = szint;
+        }
+    }
+
+
+
+
 }//namespace
