@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO.Pipes;
 using System.Linq;
@@ -26,6 +27,7 @@ namespace Könyvkölcsönző
             admin.Fomenu();
             admin.CheckStart();
             Console.ReadLine();
+            
         }//main
     }//class Program
     public abstract class EMBER
