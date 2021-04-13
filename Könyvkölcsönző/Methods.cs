@@ -3,51 +3,66 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography; //sha256-kódoláshoz kell
 using System.IO; // fájlkezeléshez
-using System.Runtime.Remoting.Messaging; 
+using System.Runtime.Remoting.Messaging;
+
 namespace Könyvkölcsönző
 {
     class Methods
     {
-        public string session = ""; //az éppen bejelentkezett felhasználó tárolása
         public const string FelhasznalokFile = "felhasznalokdict.txt"; // beolvas a txt-ből induláskor a felhasználók adatbázisaként szolgál
         public const string IdHelperFile = "IDHELP.txt"; //id számoláshoz segítség
-        public Dictionary<string, string> felhasznalokdict = new Dictionary<string, string>(); // felhasználók tárolója, későbbi fejlesztés pl. try catch exception ha ugyan az a felhasználó akar regisztrálni
+        public Konyvadmin admin0;
+        public Diak users;
+        public Konyvtaros admin;
+        public Tanar teacher;
+
         
-        public static void CreateArrList()
-        {
-            var arlist = new ArrayList();
-        }
         public void Bejelentkez()
         {
-            string welcome = "Kérem, jelentkezzen be !";
-            Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + (welcome.Length / 2)) + "}", welcome));
-            string felhasznalonev = "Felhasználónév: ";
-            Console.Write(String.Format("{0," + ((Console.WindowWidth / 2) + (felhasznalonev.Length / 2)) + "}",
-                felhasznalonev));
-
-            string eltarolFelh = Console.ReadLine();
-            string jelszo = "Jelszó: ";
-            Console.Write(String.Format("{0," + ((Console.WindowWidth / 2) + (jelszo.Length / 2)) + "}", jelszo));
-            string eltarolpw = PwHandler();
-
-            //megírni a user+pw ellenőrzést dictionary-vel
-            if (felhasznalokdict.ContainsKey(eltarolFelh))
+            bool found = false;
+            while (!found)
             {
-                if (felhasznalokdict.ContainsValue(eltarolpw))
+                string welcome = "Kérem, jelentkezzen be !";
+                Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + (welcome.Length / 2)) + "}", welcome));
+                string felhasznalonev = "Felhasználónév: ";
+                Console.Write(String.Format("{0," + ((Console.WindowWidth / 2) + (felhasznalonev.Length / 2)) + "}",
+                    felhasznalonev));
+
+                string eltarolFelh = Console.ReadLine();
+                string jelszo = "Jelszó: ";
+                Console.Write(String.Format("{0," + ((Console.WindowWidth / 2) + (jelszo.Length / 2)) + "}", jelszo));
+                string eltarolpw = Hash(PwHandler());
+                // 1; admin; 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918;
+                //2; diak1; 5b6714286f8d5fa27df5eef4ee1eff05b97e3ebbc0951b00020373c0094102fa; false; true; false; könyvtaros,diak,tanar
+                using (StreamReader sr = new StreamReader(FelhasznalokFile))
                 {
-                    //ide meghívni újra a menüt? bejelentkezve
-                    //elmenti a felhasználót a session változóba
-                    Console.WriteLine("Sikeres Bejelentkezés!");
+                    while (!sr.EndOfStream)
+                    {
+                        string[] sor = sr.ReadLine().Split(';');
+                        if  (sor[2] == eltarolpw)
+                        {
+                            if(Convert.ToBoolean(sor[3]) == true) //admin
+                            {
+                                admin0 = new Konyvadmin(sor);
+
+                            } else if(Convert.ToBoolean(sor[4]) == true) //diak
+                            {
+                                users = new Diak(Convert.ToInt32(sor[0]), sor[1], sor[2], Convert.ToBoolean(sor[3]), Convert.ToBoolean(sor[4]), Convert.ToBoolean(sor[5]));
+                            }
+                            else if (Convert.ToBoolean(sor[5]) == true) //tanar
+                            {
+                                teacher = new Tanar(Convert.ToInt32(sor[0]), sor[1], sor[2], Convert.ToBoolean(sor[3]),Convert.ToBoolean(sor[4]), Convert.ToBoolean(sor[5]));
+                            }
+                            found = true;
+                        }
+                    }
                 }
-            }
-            else
-            {
-                Console.WriteLine("A megadott felhasználónév helytelen!");
             }
         }
 
@@ -69,6 +84,7 @@ namespace Könyvkölcsönző
             string pw = PwHandler();
             pw=Hash(pw);
             fajlbair(eltarolFelh,pw,ID_Count());
+            Console.WriteLine(users.Pw);
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Kész...");
             Console.ResetColor();
@@ -152,12 +168,13 @@ namespace Könyvkölcsönző
             //string 
             //Console.WriteLine(String.Format("{0," + ((Console.WindowWidth / 2) + (textToEnter.Length / 2)) + "}", textToEnter));
         }
+
         public void CheckStart()
         {
             //mivel nincs szerver, ez a metódus ellenőrzi hogy létezik-e az 
-            //adatbázisként szolgáló txt fájl, illetve ez tölti fel az induláskor
-            //a még üres szótárakat, arraylisteket
-            CreateArrList();
+            //adatbázisként szolgáló txt fájl,
+            //illetve ez tölti fel az induláskor ?
+            //a még üres szótárakat, arraylisteket ?
             if (!File.Exists(FelhasznalokFile))
             {
                 using (StreamWriter sv = new StreamWriter(File.Create("felhasznalokdict.txt"))) ;
@@ -169,50 +186,24 @@ namespace Könyvkölcsönző
             {
                 using (StreamWriter sv = new StreamWriter(File.Create("idhelper"))) ;
             }
-
-
-            string user = "", pw = "", id = "";
-            int szamlalo = 0;
-            using (StreamReader sr = new StreamReader("1.txt"))
-            {
-                while (!sr.EndOfStream)
-                {
-                    if (szamlalo % 2 == 0)
-                    {
-                        user = sr.ReadLine();
-                        szamlalo++;
-                    }
-                    else if(szamlalo%3==0)
-                    {
-                        id = sr.ReadLine();
-                        szamlalo++;
-                    }
-                    else if(!(szamlalo%2==0))
-                    {
-                        pw = sr.ReadLine();
-                        szamlalo++;
-                    }
-                    
-                    felhasznalokdict.Add(user,pw);
-                    user = "";
-                    pw = "";
-                }
-            }
+            
         }
 
         public void fajlbair(string user, string uspw,int id)
         {
-            string[] sorok = {user, uspw,id.ToString()};
-            File.AppendAllLines(Path.Combine(FelhasznalokFile),sorok);
-            
-        }
+            string[] sorok = { id.ToString(), user, uspw, "false", "true", "false"};
+            using (StreamWriter sw = new StreamWriter(FelhasznalokFile, true))
+            {
+                foreach(var item in sorok)
+                {
+                    sw.Write(item + ";");
 
-        public void BookManage()
-        {
-            //csak könyvtáros használhatja, hozzájuk kötni valahogy
-            //kell ez egyáltalán?
-        }
+                }
+                users = new Diak(Convert.ToInt16(sorok[0]),sorok[1], sorok[2], false, true, false); //egyből megkapja az adatot, nem kell újra bejelentkezni
+                sw.WriteLine();
+            }
 
+        }
         public int ID_Count() 
         {
             int a = ID_VALUE_READ();
@@ -242,10 +233,7 @@ namespace Könyvkölcsönző
             }
         }
 
-        public void arraylistappend(string a,string b, string c)
-        {
-
-        }
+        
 
 
 

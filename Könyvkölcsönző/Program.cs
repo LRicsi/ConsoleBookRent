@@ -6,7 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Security.Cryptography; //sha256-kódoláshoz kell
-using System.IO; //fájlkezeléshez kell
+using System.IO;
+using System.Runtime.CompilerServices; //fájlkezeléshez kell
 
 namespace Könyvkölcsönző
 {
@@ -19,28 +20,37 @@ namespace Könyvkölcsönző
     //verem,sor
     //generikusok
     //eseménykezelő - pl ha kikölcsönzött valaki egy könyvet, vagy regisztrált
+
     class Program
     {
+
         static void Main(string[] args)
         {
             Methods admin = new Methods();
             admin.Fomenu();
             admin.CheckStart();
+
             Console.ReadLine();
-            
         }//main
     }//class Program
     public abstract class EMBER
     {
+        public const string FelhasznalokFile = "felhasznalokdict.txt"; // beolvas a txt-ből induláskor a felhasználók adatbázisaként szolgál
         protected int id; //emberek azonosítására
         protected bool konyvtarosvagyok = false; // könyvtárosok megkülönböztetése
         protected bool diakvagyok = false; //diákok megkülönböztetése
         protected bool tanarvagyok = false; // tanárok megkülönböztetése
-        public string nev; //a rendszerben szereplők neve
-        //public int Id
-        //{
-        //    get { return id; }
-        //}
+        
+        private string pw;
+        public string Pw { 
+            get { return pw; } 
+            set { pw = value;  } 
+        }
+        public string felh;
+        public int Id
+        {
+            get { return id; }
+        }
         //public bool Konyvtarosvagyok
         //{
         //    get { return konyvtarosvagyok; }
@@ -57,13 +67,14 @@ namespace Könyvkölcsönző
         //    set { tanarvagyok = value; }
         //}
 
-        public EMBER(int id, bool konyvtarosvagyok,bool diakvagyok, bool tanarvagyok, string nev) // alaposztály konstruktora
+        public EMBER(int id, string felh,string pw, bool konyvtarosvagyok,bool diakvagyok, bool tanarvagyok) // alaposztály konstruktora
         {
             this.id = id;
             this.konyvtarosvagyok = konyvtarosvagyok;
             this.diakvagyok = diakvagyok;
             this.tanarvagyok = tanarvagyok;
-            this.nev = nev;
+            this.felh = felh;
+            this.pw = pw;
         }
 
         //public int idleptet() //id léptetéséért felelős, exceptionnal megcsinálni még
@@ -72,29 +83,54 @@ namespace Könyvkölcsönző
         //    return id;
         //}
     }//ember
-
    public class Konyvtaros : EMBER // könyvtárosok
    {
-       public Konyvtaros(int id, bool konyvtarosvagyok, bool diakvagyok, bool tanarvagyok, string nev) : base(id,konyvtarosvagyok,diakvagyok,tanarvagyok,nev)// könyvtáros konstruktora
+       public Konyvtaros(int id, string felh, string pw, bool konyvtarosvagyok, bool diakvagyok, bool tanarvagyok) : base(id,felh,pw,konyvtarosvagyok,diakvagyok,tanarvagyok)// könyvtáros konstruktora
        {
        }
+       
+       public void TanarFelvesz(int id)
+        {
+            using(StreamReader sr = new StreamReader(FelhasznalokFile))
+            {
+                while (!sr.EndOfStream)
+                {
+                    string[] sor = sr.ReadLine().Split(';');
+                    if (id == Convert.ToInt32(sor[0]))
+                    {
+                        Console.WriteLine("Megtaláltam a(z) {0}, kívánja tanárrá avatni (y/n)?",id);
+                        if (Console.ReadLine().ToLower()== "y")
+                        {
+                            sor[4] = false.ToString();
+                            sor[5] = true.ToString();
+                        }
+                    }
+                }
+            }
+        }
+
+       
+
    } // könyvtáros
 
    public class Diak : EMBER //diákok
    {
        public int evfolyam;
        public string osztaly;
-       public Diak(int id, bool konyvtarosvagyok, bool diakvagyok, bool tanarvagyok, string nev,int evfolyam,string osztaly) : base(id, konyvtarosvagyok, diakvagyok, tanarvagyok, nev) //diákok konstruktora
-       {
-           this.evfolyam = evfolyam;
-           this.osztaly = osztaly;
+       public Diak(int id, string felh, string pw, bool konyvtarosvagyok, bool diakvagyok, bool tanarvagyok) : base(id, felh, pw, konyvtarosvagyok, diakvagyok, tanarvagyok) //diákok konstruktora
+       { 
+           this.id = id;
+           this.felh = felh;
+           this.Pw = pw;
+           /*this.evfolyam = evfolyam;
+           this.osztaly = osztaly;  majd*/
        }
    }
 
    public class Tanar : EMBER //tanárok
    {
        public string tantargy;
-       public Tanar(int id, bool konyvtarosvagyok, bool diakvagyok, bool tanarvagyok, string nev,string tantargy) : base(id, konyvtarosvagyok, diakvagyok, tanarvagyok, nev) //diákok konstruktora
+       public Tanar(int id, string felh, string pw, bool konyvtarosvagyok, bool diakvagyok, bool tanarvagyok) : base(id, felh, pw, konyvtarosvagyok, diakvagyok, tanarvagyok) //diákok konstruktora
        {
            this.tantargy = tantargy;
        }
