@@ -1,0 +1,16 @@
+1;Szepirodalom;2018;Vuk;Fekete István
+2;Szepirodalom;2021;A könyvkötő;A könyvkötő
+3;Szepirodalom;2021;A földönkívüliek;Doron Rabinovici
+4;Szepirodalom;2021;Az íjász;Paulo Coelho
+5;Termeszettudomany;2021;Madarak;Dr.Havasi Máté
+6;Termeszettudomany;2021;Élet a Földön;David Attenborough
+7;Termeszettudomany;2021;Vadászkrónika;Jurán Vidor
+8;Termeszettudomany;2021;Mars 36;Hargitai Henrik
+9;Nyelvtan;2021;Arbeitsbuch A2;Gottlieb Éva
+10;Nyelvtan;2021;Einfach Hören B2;Sominé Herbik Olga
+11;Nyelvtan;2019;Express English 1;Némethné Hock Ildikó
+12;Nyelvtan;2020;1000 Questions & Answers;Kész Zoltán
+13;Matematika;2021;Valószínűségszámítás 1;Vetier András
+14;Matematika;2021;Számcirkusz;Darvas Ferenc
+15;Matematika;2021;Egy tétel születése;Cédric Villani
+16;Matematika;2021;Logika-land;Róka Sándor
