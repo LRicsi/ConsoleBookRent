@@ -189,13 +189,13 @@ namespace Könyvkölcsönző
             switch (tantargy)
             {
                 case '1':
-                    targy = "Biologia";
+                    targy = "Termeszettudomany";
                     break;
                 case '2':
-                    targy = "Irodalom";
+                    targy = "Szepirodalom";
                     break;
                 case '3':
-                    targy = "Idegen nyelv";
+                    targy = "Nyelvtan";
                     break;
                 case '4':
                     targy = "Matematika";

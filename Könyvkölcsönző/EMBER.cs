@@ -106,7 +106,7 @@ namespace Könyvkölcsönző
                     while (!sr.EndOfStream)
                     {
                         string[] sorok = sr.ReadLine().Split(';');
-                        konyvlista.Add(new Konyv(Convert.ToInt16(sorok[0]), sorok[1], Convert.ToInt16(sorok[2]),
+                        konyvlista.Add(new Konyv(Convert.ToInt16(sorok[0]), sorok[1], Convert.ToInt32(sorok[2]),
                             sorok[3],sorok[4])); //minden könyv 1 sor -> 1példány
                     }
                 }
